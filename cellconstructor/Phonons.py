@@ -1302,7 +1302,10 @@ class Phonons:
         for i in range(nat_sc):
             for j in range(nat_sc):
                 lines.append("%4d\t%4d\n" % (i+1, j+1))
-                mat = np.copy(np.real(superdyn.dynmats[0][3*i : 3*i+ 3, 3*j: 3*j+3]))
+                sscha_index = Methods.generate_correct_order_phono3py(superdyn.GetSupercell()[0],superdyn.GetSupercell()[1],superdyn.GetSupercell()[2],nat)
+                sscha_i = sscha_index[i]
+                sscha_j = sscha_index[j]
+                mat = np.copy(np.real(superdyn.dynmats[0][3*sscha_i : 3*sscha_i+ 3, 3*sscha_j: 3*sscha_j+3]))
 
                 if units_ev_ang2:
                     mat *= RY_TO_EV / BOHR_TO_ANGSTROM**2

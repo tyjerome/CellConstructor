@@ -2191,3 +2191,42 @@ def tensor3_to_phonopy_fc3(SSCHA_tensor, phonon):
                 for kat in range(nat):
                     phonopy_tensor[iat][jat*nuc + unit_cell_order_1[iuc]][kat*nuc + unit_cell_order_2[iuc]] = SSCHA_force_constants[iuc,3*iat:3*(iat+1),3*jat:3*(jat+1), 3*kat:3*(kat+1)]
     return phonopy_tensor*RY_TO_EV/BOHR_TO_ANGSTROM**3
+def generate_correct_order_phono3py(supercell_x : int, supercell_y : int, supercell_z : int, number_of_atoms : int):
+    """
+    The index of atoms in supercell lattice in phono3py and SSCHA is different
+    This function helps to save_phonopy function to generate FORCE_CONSTANT in correct order.
+    Parameters
+    ----------
+        supercell_x : int
+            supercell size in x axis
+        supercell_y : int
+            supercell size in y axis
+        supercell_z : int
+            supercell size in z axis
+        number_of_atoms : int
+            number of atoms in a single unit cell
+        
+
+    Results
+    -------
+        new_index : ndarray(size = (number of total atoms))
+            the new index of atoms in the phono3py for atoms 
+        
+    """
+    unit = []
+    for i in range(supercell_x*supercell_y*supercell_z):
+        b1 = i // (supercell_x*supercell_y)
+        r1 = i % (supercell_y*supercell_z)
+        b2 = r1 // supercell_z
+        b3 = r1 % supercell_z
+        unit.append(b3*supercell_y*supercell_x + b2*supercell_x + b1)
+
+    new_index = []
+    for n in range(1, supercell_x*supercell_y*supercell_z*number_of_atoms + 1):
+        cq = (n-1) // number_of_atoms
+        cr = (n-1) % number_of_atoms + 1
+        new_value = unit[cq]+1 + supercell_x*supercell_y*supercell_z*(cr - 1)
+        new_index.append(new_value)
+        #print(n, new_value)
+
+    return new_index
