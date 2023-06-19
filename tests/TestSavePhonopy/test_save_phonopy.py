@@ -11,10 +11,13 @@ def test_phonopy_input():
     total_path = os.path.dirname(os.path.abspath(__file__))
     os.chdir(total_path)
 
-    dyn = CC.Phonons.Phonons()
-    dyn.load_phonopy()
-    dyn.CC.Phonons.save_phonopy
-    dyn.save_qe("prova")
+    dyn = CC.Phonons.Phonons() # Load the CaSiO3 dynamical matrices
+    dyn.Phonons.save_phonopy()
+
+    # Load the two Force Constants files and compare them
+    # Use assert to check if the numbers are similar
+    assert np.abs(numbar_1 - number_2) < 1e-5
+
 
 
 if __name__ == "__main__":
